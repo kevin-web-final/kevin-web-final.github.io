@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>This is my web game</title>
+        <link rel="stylesheet" href="mystyle.css">
+    </head>
+
+    <body>
+        <div id = "lotto_number_div" >
+            <p>使用者可在網頁上自行輸入 3 個號碼 (範圍是數字 1~10)；每次開始遊戲時會亂數產生 3 個得獎號碼 (範圍是數字 1~10 不重複)；當使用者輸入 3 個號碼並按下開獎按鈕後，會開始比對輸入的號碼及得獎號碼 (不管排列先後順序)，全部對中時為頭獎、2 個號碼對中為貳獎、1 個號碼對中為參獎</p>
+            <hr>
+            <h1>樂透號碼</h1>
+            <p id = "lotto_number"> ? ? ?</p>
+            <br>
+            <hr>
+            <br>
+            <h1>你的號碼</h1>
+        </div>
+
+        <div id = "guess_div" class="container">
+            <input id = "user_number1" type="text" name="text">
+            <input id = "user_number2" type="text" name="text">
+            <input id = "user_number3" type="text" name="text">
+        </div>
+
+        <div id="button_div" class="button">
+            <br>
+            <button type="button" onclick="reset()">重新開始</button>
+            <button id="confirm" type="button" onclick="show_number()">確認</button>
+        </div>
+
+        <div id="output_div">
+            <br>
+            <hr>
+            <br>
+            <h1>得獎結果</h1>
+            <p id="result"></p>
+            <p id="prize"></p>
+
+        </div>
+        
+
+        <script>
+            function reset(){
+                document.getElementById("user_number1").value = "";
+                document.getElementById("user_number2").value = "";
+                document.getElementById("user_number3").value = "";
+                document.getElementById("lotto_number").innerHTML = " ? ? ? ";
+                document.getElementById("prize").innerHTML = " ";
+                document.getElementById("result").innerHTML = " ";
+                document.getElementById("confirm").disabled = false;
+            }
+
+            function rand(){
+                return Math.floor(Math.random() * 10 + 1);
+            }
+
+            function check(){
+                const user_guessed = [];
+                user_guessed[0] = document.getElementById("user_number1").value;
+                user_guessed[1] = document.getElementById("user_number2").value;
+                user_guessed[2] = document.getElementById("user_number3").value;
+
+                if(user_guessed[0] == "" || user_guessed[1] == "" || user_guessed[2] == ""){
+                    reset();
+                    window.alert("請輸入完3個數字");
+                    return false;
+                }
+                else if(!(parseInt(user_guessed[0]) >= 1 || parseInt(user_guessed[0]) <= 10) || !(parseInt(user_guessed[1]) >= 1 || parseInt(user_guessed[1]) <= 10) || !(parseInt(user_guessed[0]) >= 1 || parseInt(user_guessed[0]) <= 10)){
+                    reset();
+                    window.alert("只能輸入1~10");
+                    return false;
+                }
+                else if(user_guessed[0] == user_guessed[1] || user_guessed[0] == user_guessed[2] || user_guessed[1] == user_guessed[2]){
+                    reset();
+                    window.alert("不可輸入重複的數字");
+                    return false;
+                }
+                else{
+                    return true;
+                }
+
+
+            }
+
+            function show_number(){
+                const lotto = [];
+                const user_guessed = [];
+
+                user_guessed[0] = document.getElementById("user_number1").value;
+                user_guessed[1] = document.getElementById("user_number2").value;
+                user_guessed[2] = document.getElementById("user_number3").value;
+
+                if(check()){
+                    lotto[0] = rand();
+                    do{
+                        lotto[1] = rand();
+                    } while(lotto[1] == lotto [0]);
+                    
+                    do{
+                        lotto[2] = rand();
+                    } while(lotto[2] == lotto[0] || lotto[2] == lotto[1]);
+
+
+                    document.getElementById("lotto_number").innerHTML = lotto[0] + "  " + lotto[1] + "  " + lotto[2];
+
+                    bingo = 0;
+                    for(var i = 0; i < 3; i++){
+                        for(var j = 0; j < 3; j++){
+                            if(user_guessed[i] == lotto[j]){
+                                bingo += 1;
+                                break;
+                            }
+                        }
+                    }
+
+                    switch(bingo){
+                        case 0:
+                            document.getElementById("result").innerHTML = "沒中";
+                            document.getElementById("prize").innerHTML = "$0";
+                            break; 
+                        case 1:
+                            document.getElementById("result").innerHTML = "參獎";
+                            document.getElementById("prize").innerHTML = "$10000";
+                            break;
+                        case 2:
+                            document.getElementById("result").innerHTML = "貳獎";
+                            document.getElementById("prize").innerHTML = "$50000";
+                            break;
+                        case 3:
+                            document.getElementById("result").innerHTML = "頭獎";
+                            document.getElementById("prize").innerHTML = "$200000";
+                            break;
+                    }
+
+                    document.getElementById("confirm").disabled = true;
+                }
+
+
+            }
+        </script>
+    </body>
+</html>
